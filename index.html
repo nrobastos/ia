@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>menu — repositório ia</title>
+    <style>
+        :root { --accent: #2563eb; --text: #1f2937; --bg: #ffffff; --card: #f9fafb; }
+        body { font-family: -apple-system, system-ui, sans-serif; color: var(--text); background: var(--bg); max-width: 700px; margin: 0 auto; padding: 50px 20px; line-height: 1.5; }
+        h1 { font-size: 1.8rem; font-weight: 800; border-bottom: 2px solid #f3f4f6; padding-bottom: 15px; margin-bottom: 30px; text-transform: lowercase; }
+        .menu-container { display: flex; flex-direction: column; gap: 16px; }
+        .menu-item { display: flex; align-items: center; justify-content: space-between; padding: 20px; background: var(--card); border: 1px solid #e5e7eb; border-radius: 12px; text-decoration: none; color: inherit; transition: all 0.2s ease; }
+        .menu-item:hover { border-color: var(--accent); transform: translateX(5px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .menu-item h2 { margin: 0; font-size: 1.1rem; color: var(--accent); text-transform: lowercase; }
+        .menu-item p { margin: 5px 0 0; font-size: 0.9rem; color: #6b7280; }
+        .icon { font-size: 1.2rem; color: #9ca3af; }
+        footer { margin-top: 50px; font-size: 0.8rem; color: #9ca3af; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <h1>nrobastos / ia — menu</h1>
+
+    <nav class="menu-container">
+        <a href="jogo_do_galo.html" class="menu-item">
+            <div>
+                <h2>jogo do galo</h2>
+                <p>implementação interactiva do clássico jogo (tic-tac-toe).</p>
+            </div>
+            <span class="icon">→</span>
+        </a>
+
+        <a href="plano_sessao_gamificacao_v7.html" class="menu-item">
+            <div>
+                <h2>plano de sessão: gamificação</h2>
+                <p>documentação estratégica e estrutura da sessão.</p>
+            </div>
+            <span class="icon">→</span>
+        </a>
+    </nav>
+
+    <footer>
+        projectos alojados em github pages
+    </footer>
+
+</body>
+</html>
