@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gamificação com IA — Documento de Apoio</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#fff;--ink:#111;--muted:#666;--faint:#aaa;--rule:#e8e8e8;--accent:#1a7a4f;--al:#e8f5e9;--n1:#1a5c2a;--n1bg:#e6f4ea;--n2:#7a4800;--n2bg:#fff3e0;--n3:#6b0080;--n3bg:#f3e5f5}
+body{font-family:'DM Sans',sans-serif;background:#fff;color:var(--ink);min-height:100vh}
+.hdr{border-bottom:2px solid var(--ink);border-top:4px solid #66bb6a;padding:20px 36px 0;position:sticky;top:0;background:#fff;z-index:100}
+.hdr-top{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.hdr h1{font-family:'DM Serif Display',serif;font-size:19px;line-height:1.2}
+.hdr h1 em{font-style:italic;color:var(--accent)}
+.badge{background:#e8f5e9;color:#1b5e20;font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:.08em;text-transform:uppercase;align-self:flex-start}
+.meta{display:flex;gap:12px;flex-wrap:wrap;margin-top:4px}
+.mi{font-size:10px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.mi span{color:var(--ink);font-weight:700}
+.pb{height:3px;background:var(--rule);margin-top:10px;border-radius:2px;overflow:hidden}
+.pf{height:100%;background:var(--accent);border-radius:2px;transition:width .4s ease;width:0%}
+.nav{display:flex;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--rule)}
+.nav::-webkit-scrollbar{display:none}
+.nb{background:none;border:none;border-bottom:2px solid transparent;padding:9px 14px;font-family:'DM Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.04em;color:var(--muted);cursor:pointer;white-space:nowrap;margin-bottom:-1px;transition:all .2s}
+.nb:hover{color:var(--ink)}.nb.act{color:var(--accent);border-bottom-color:var(--accent)}
+.main{display:flex;min-height:calc(100vh - 148px)}
+.sb{width:200px;min-width:200px;border-right:1px solid var(--rule);padding:16px 0;position:sticky;top:148px;height:calc(100vh - 148px);overflow-y:auto}
+.sbl{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);padding:0 16px 8px}
+.si{display:flex;align-items:center;gap:9px;padding:8px 16px;cursor:pointer;border-left:2px solid transparent;transition:all .2s}
+.si:hover{background:#f8f8f8}.si.act{border-left-color:var(--accent);background:var(--al)}
+.si-t{font-family:'DM Mono',monospace;font-size:10px;color:var(--faint);min-width:28px}
+.si-n{font-size:12px;font-weight:500;line-height:1.3}.si.act .si-n{color:var(--accent)}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.ct{flex:1;padding:32px 40px;max-width:860px}
+.blk{display:none;animation:fi .25s ease}.blk.vis{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.bh{display:flex;align-items:flex-start;gap:16px;margin-bottom:20px;padding-bottom:18px;border-bottom:1px solid var(--rule)}
+.bn{font-family:'DM Serif Display',serif;font-size:40px;line-height:1;color:var(--rule);min-width:48px}
+.bht{flex:1}
+.btag{display:inline-block;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border-radius:3px;margin-bottom:4px}
+.btitle{font-family:'DM Serif Display',serif;font-size:22px;line-height:1.2;margin-bottom:4px}
+.bsub{font-size:12px;color:var(--muted);line-height:1.5}
+.dbadge{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;background:var(--ink);color:#fff;padding:5px 11px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.tw{background:#f8f8f8;border:1px solid var(--rule);border-radius:8px;padding:12px 16px;margin-bottom:20px;display:flex;align-items:center;gap:12px}
+.td{font-family:'DM Mono',monospace;font-size:28px;font-weight:500;color:var(--ink);min-width:80px;transition:color .3s}
+.td.run{color:var(--accent)}.td.warn{color:#cc3300}
+.tlbl{font-size:11px;color:var(--muted)}
+.tbtns{display:flex;gap:7px;margin-left:auto}
+.tbtn{background:#fff;border:1px solid var(--rule);border-radius:6px;padding:6px 12px;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s}
+.tbtn:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
+.tbtn.pri{background:var(--accent);color:#fff;border-color:var(--accent)}.tbtn.pri:hover{background:#0d5c38}
+.card{border:1px solid var(--rule);border-radius:8px;margin-bottom:12px;overflow:hidden}
+.ch{display:flex;align-items:center;gap:10px;padding:12px 15px;background:#fafafa;cursor:pointer;user-select:none;transition:background .15s}
+.ch:hover{background:#f2f2f2}
+.ci{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.ct2{font-size:13px;font-weight:600;flex:1}.cd{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)}
+.cc{font-size:10px;color:var(--faint);transition:transform .2s}.card.op .cc{transform:rotate(180deg)}
+.cb{padding:15px;display:none;border-top:1px solid var(--rule)}.card.op .cb{display:block}
+.lvl-tabs{display:flex;gap:0;margin-bottom:14px;border:1px solid var(--rule);border-radius:7px;overflow:hidden}
+.lt{flex:1;background:none;border:none;padding:8px 4px;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;text-align:center;line-height:1.3}
+.lt.n1a{background:var(--n1bg);color:var(--n1)}.lt.n2a{background:var(--n2bg);color:var(--n2)}.lt.n3a{background:var(--n3bg);color:var(--n3)}
+.lt:not(.n1a):not(.n2a):not(.n3a){background:#f5f5f5;color:var(--muted)}
+.lp{display:none}.lp.vis{display:block}
+.ref-box{border:1px solid var(--rule);border-radius:7px;margin-top:10px;overflow:hidden}
+.ref-hdr{display:flex;align-items:center;gap:8px;padding:9px 13px;background:#f9f9f9;cursor:pointer;user-select:none;font-size:11px;font-weight:600;color:var(--muted);transition:background .15s}
+.ref-hdr:hover{background:#f2f2f2}
+.ref-hdr span{flex:1}.ref-arrow{font-size:10px;transition:transform .2s}
+.ref-box.op .ref-arrow{transform:rotate(180deg)}
+.ref-body{display:none;padding:12px}.ref-box.op .ref-body{display:block}
+.inter-box{border:1px dashed #90caf9;border-radius:7px;margin-top:8px;overflow:hidden}
+.inter-hdr{display:flex;align-items:center;gap:8px;padding:8px 13px;background:#e8f4f8;cursor:pointer;user-select:none;font-size:11px;font-weight:600;color:#01579b;transition:background .15s}
+.inter-hdr:hover{background:#d0eaf7}
+.inter-hdr span{flex:1}.inter-arrow{font-size:10px;transition:transform .2s}
+.inter-box.op .inter-arrow{transform:rotate(180deg)}
+.inter-body{display:none;padding:12px;background:#f0f8ff}.inter-box.op .inter-body{display:block}
+.tool-tabs{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px}
+.tt{background:#f5f5f5;border:1px solid var(--rule);border-radius:5px;padding:4px 9px;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s}
+.tt.act{color:#fff;border-color:transparent}
+.tp{display:none}.tp.vis{display:block}
+.obj{background:var(--al);border-left:3px solid var(--accent);border-radius:0 6px 6px 0;padding:10px 13px;margin-bottom:16px;font-size:13px;line-height:1.6;color:#0d3d20}
+.obj strong{display:block;font-size:10px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px;color:var(--accent)}
+.ped-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:12px 0}
+.ped-card{border-radius:8px;padding:14px;border:1px solid var(--rule)}
+.ped-icon{font-size:24px;margin-bottom:8px}
+.ped-title{font-size:12px;font-weight:700;margin-bottom:6px}
+.ped-desc{font-size:11px;color:var(--muted);line-height:1.5;margin-bottom:0}
+.ped-key{font-size:10px;font-weight:700;padding:2px 7px;border-radius:3px;margin-top:8px;display:inline-block;letter-spacing:.05em;text-transform:uppercase}
+p{font-size:13px;line-height:1.7;color:#333;margin-bottom:9px}
+.sl{list-style:none;margin-bottom:12px}
+.sl li{display:flex;gap:10px;align-items:flex-start;padding:6px 0;border-bottom:1px solid var(--rule);font-size:13px;line-height:1.5}
+.sl li:last-child{border-bottom:none}
+.sn{font-family:'DM Mono',monospace;font-size:10px;color:var(--faint);min-width:16px;padding-top:2px}
+.pbox{background:#f5f5f5;border-left:3px solid #bbb;border-radius:0 6px 6px 0;padding:11px 13px;margin:9px 0;font-family:'DM Mono',monospace;font-size:11px;line-height:1.8;color:#333;white-space:pre-wrap;word-break:break-word}
+.pbox-inter{background:#e8f4fb;border-left:3px solid #5bc0de;border-radius:0 6px 6px 0;padding:11px 13px;margin:6px 0;font-family:'DM Mono',monospace;font-size:11px;line-height:1.8;color:#1a4a6e;white-space:pre-wrap;word-break:break-word}
+.plbl{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:4px}
+.plbl-inter{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#01579b;margin-bottom:4px}
+.tip{background:#fffbf0;border:1px solid #f0e0a0;border-radius:6px;padding:9px 12px;font-size:12px;line-height:1.6;color:#664400;margin:9px 0}
+.tip::before{content:"⚡ "}
+.warn{background:#fff5f5;border:1px solid #f0c0c0;border-radius:6px;padding:9px 12px;font-size:12px;line-height:1.6;color:#660000;margin:9px 0}
+.warn::before{content:"⏱ "}
+.adv-box{background:#f3e5f5;border:1px solid #ce93d8;border-radius:6px;padding:9px 12px;font-size:12px;line-height:1.6;color:#6b0080;margin:9px 0}
+.adv-box::before{content:"🎯 Nível avançado: "}
+.lx{background:#e8f4f8;border:1px solid #90caf9;border-radius:6px;padding:9px 12px;font-size:12px;line-height:1.6;color:#01579b;margin:9px 0}
+.lx::before{content:"∑ LaTeX: "}
+.fb-note{background:#e8f5e9;border:1px solid #a5d6a7;border-radius:6px;padding:9px 12px;font-size:12px;line-height:1.6;color:#1b5e20;margin:9px 0}
+.fb-note::before{content:"💬 Feedback: "}
+.port-note{background:#e8f5e9;border:1px solid #a5d6a7;border-radius:6px;padding:9px 12px;font-size:12px;line-height:1.6;color:#1b5e20;margin:9px 0}
+.port-note::before{content:"📁 Portfolio: "}
+.save-note{background:#fff8e1;border:1.5px solid #f9a825;border-radius:6px;padding:10px 13px;font-size:12px;line-height:1.6;color:#e65100;margin:9px 0;font-weight:600}
+.save-note::before{content:"💾 Antes de avançar: "}
+.escape-box{background:#1a1a2e;border-radius:10px;padding:20px;margin:14px 0;color:#e0e0ff}
+.escape-box h4{font-family:'DM Serif Display',serif;font-size:16px;color:#a0a0ff;margin-bottom:10px}
+.escape-box .pbox{background:#2a2a4e;border-left:3px solid #7070ff;color:#d0d0ff}
+.escape-box .plbl{color:#8080cc}
+.tcr{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.tc{font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;color:#fff}
+.ftg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.ftc{border:1px solid var(--rule);border-radius:7px;padding:12px;transition:border-color .2s}
+.ftc:hover{border-color:var(--accent)}
+.ftc-icon{font-size:18px;margin-bottom:5px}.ftc-name{font-size:12px;font-weight:700;margin-bottom:3px}
+.ftc-desc{font-size:11px;color:var(--muted);line-height:1.5}
+.ftc-tag{display:inline-block;font-size:10px;font-weight:600;padding:2px 6px;border-radius:3px;margin-top:6px}
+.nf{display:flex;justify-content:space-between;align-items:center;margin-top:32px;padding-top:16px;border-top:1px solid var(--rule)}
+.nfb{display:flex;align-items:center;gap:6px;background:none;border:1px solid var(--rule);border-radius:6px;padding:8px 13px;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s}
+.nfb:hover{background:var(--ink);color:#fff;border-color:var(--ink)}.nfb:disabled{opacity:.3;cursor:default;pointer-events:none}
+.nfi{font-family:'DM Mono',monospace;font-size:10px;color:var(--faint)}
+@media(max-width:700px){.sb{display:none}.ct{padding:18px 14px}.ftg,.ped-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div class="hdr-top"><div>
+    <h1>Gamificação com <em>IA</em> — Documento de Apoio</h1>
+    <div class="meta">
+      <div class="mi">📋 <span>Documento dos Formandos</span></div>
+    </div>
+  </div>
+  <div class="badge">Documento dos Formandos</div>
+  </div>
+  <div class="pb"><div class="pf" id="PF"></div></div>
+  <div class="nav" id="NAV"></div>
+</div>
+<div class="main">
+  <div class="sb" id="SB"></div>
+  <div class="ct" id="CT"></div>
+</div>
+<script>
+const TCO={ChatGPT:'#1F4E79',Gemini:'#1A73E8',NotebookLM:'#3c3c3c',Copilot:'#0078D4','AI Studio':'#34A853',Claude:'#cc785c'};
+const TS={};let ATB=null,TI=null;
+function initT(id,m){if(!TS[id])TS[id]={s:m*60,run:false,tot:m*60}}
+function rdT(id){const s=TS[id];if(!s)return;const d=document.getElementById('td_'+id),b=document.getElementById('tb_'+id);if(!d)return;const m=Math.floor(s.s/60),sc=s.s%60;d.textContent=String(m).padStart(2,'0')+':'+String(sc).padStart(2,'0');d.className='td'+(s.run?(s.s<=60?' warn':' run'):'');if(b){b.textContent=s.run?'⏸ Pausar':'▶ Iniciar';b.className='tbtn'+(s.run?'':' pri')}}
+function togT(id){const s=TS[id];if(!s)return;if(s.run){s.run=false;if(ATB===id){clearInterval(TI);TI=null;ATB=null}}else{if(ATB&&ATB!==id)TS[ATB].run=false;if(TI)clearInterval(TI);s.run=true;ATB=id;TI=setInterval(()=>{if(!TS[id].run){clearInterval(TI);TI=null;ATB=null;return}TS[id].s--;if(TS[id].s<=0){TS[id].s=0;TS[id].run=false;clearInterval(TI);TI=null;ATB=null}rdT(id)},1000)}rdT(id)}
+function resT(id){if(ATB===id){clearInterval(TI);TI=null;ATB=null}TS[id].s=TS[id].tot;TS[id].run=false;rdT(id)}
+function pb(t){return`<div class="pbox">${t}</div>`}
+function pbi(t){return`<div class="pbox-inter">${t}</div>`}
+function pl(t){return`<div class="plbl">${t}</div>`}
+function pli(t){return`<div class="plbl-inter">${t}</div>`}
+function tip(t){return`<div class="tip">${t}</div>`}
+function warn(t){return`<div class="warn">${t}</div>`}
+function adv(t){return`<div class="adv-box">${t}</div>`}
+function lx(t){return`<div class="lx">${t}</div>`}
+function fb(t){return`<div class="fb-note">${t}</div>`}
+function port(t){return`<div class="port-note">${t}</div>`}
+function save(t){return`<div class="save-note">${t}</div>`}
+function obj(l,t){return`<div class="obj"><strong>${l}</strong>${t}</div>`}
+function card(icon,title,dur,body,open=false){return`<div class="card ${open?'op':''}"><div class="ch" onclick="this.closest('.card').classList.toggle('op')"><div class="ci">${icon}</div><div class="ct2">${title}</div><div class="cd">${dur}</div><div class="cc">▼</div></div><div class="cb">${body}</div></div>`}
+function lvlTabs(uid,panels,labels){
+  const C=['n1','n2','n3'];
+  return`<div class="lvl-tabs" id="${uid}_lt">${labels.map((l,i)=>`<button class="lt ${i===0?C[i]+'a':''}" onclick="selLvl('${uid}',${i})">${l.replace('|','<br>')}</button>`).join('')}</div><div>${panels.map((p,i)=>`<div class="lp ${i===0?'vis':''}" id="${uid}_lp${i}">${p}</div>`).join('')}</div>`;
+}
+function selLvl(uid,idx){const C=['n1','n2','n3'];document.querySelectorAll(`#${uid}_lt .lt`).forEach((b,i)=>{b.className='lt'+(i===idx?' '+C[i]+'a':'')});document.querySelectorAll(`[id^="${uid}_lp"]`).forEach((p,i)=>p.classList.toggle('vis',i===idx))}
+function refBox(uid,toolList,pContents,iContents){
+  const tabs=toolList.map((t,i)=>`<button class="tt ${i===0?'act':''}" style="${i===0?'background:'+TCO[t]+';color:#fff;border-color:'+TCO[t]:''}" onclick="selTool('${uid}',${i},'${t}')">${t}</button>`).join('');
+  const ps=pContents.map((c,ii)=>{
+    const inter=iContents&&iContents[ii]?`<div class="inter-box" id="${uid}_ib${ii}"><div class="inter-hdr" onclick="document.getElementById('${uid}_ib${ii}').classList.toggle('op')"><span>🖥️ Passo 2 — Versão interactiva</span><div class="inter-arrow">▼</div></div><div class="inter-body">${iContents[ii]}</div></div>`:'';
+    return`<div class="tp ${ii===0?'vis':''}" id="${uid}_tp${ii}">${c}${inter}</div>`;
+  }).join('');
+  return`<div class="ref-box" id="${uid}_rb"><div class="ref-hdr" onclick="document.getElementById('${uid}_rb').classList.toggle('op')"><span>📋 Prompts por plataforma — clica para expandir</span><div class="ref-arrow">▼</div></div><div class="ref-body"><div class="tool-tabs" id="${uid}_tt">${tabs}</div><div>${ps}</div></div></div>`;
+}
+function selTool(uid,idx,name){document.querySelectorAll(`#${uid}_tt .tt`).forEach((b,i)=>{if(i===idx){b.classList.add('act');b.style.background=TCO[name]||'#555';b.style.borderColor=TCO[name]||'#555';b.style.color='#fff'}else{b.classList.remove('act');b.style.background='';b.style.borderColor='';b.style.color=''}});document.querySelectorAll(`[id^="${uid}_tp"]`).forEach((p,i)=>p.classList.toggle('vis',i===idx))}
+
+// ── PLATAFORMAS ──────────────────────────────────────────────────────────
+const PLATS=['ChatGPT','Gemini','NotebookLM','Copilot','AI Studio','Claude'];
+
+// ── INSTRUÇÕES DE INTERACTIVIDADE POR PLATAFORMA ─────────────────────────
+const INTER_PASSO2={
+  ChatGPT: `${pli('ChatGPT — Passo 2: versão interactiva')}${pbi('Com base no quiz que geraste, cria agora\numa versão interactiva em HTML e JavaScript\nque funcione offline no browser.\nRequisitos:\n- Apresenta uma pergunta de cada vez\n- Feedback imediato após cada resposta\n- Pontuação acumulada visível\n- Resultado final com resumo\nO ficheiro HTML resultante pode ser\npartilhado com os alunos diretamente.')}`,
+  Gemini: `${pli('Gemini — Passo 2a: HTML interactivo')}${pbi('Com base no quiz que geraste, cria\numa versão interactiva em HTML e JavaScript\nque funcione no browser.\nFeedback imediato, pontuação e resultado final.')}
+${pli('Gemini — Passo 2b: Google Forms')}${pbi('Ou: converte o quiz para Google Forms.\nFormata assim:\nPergunta 1: [texto]\nOpções: A) ... B) ... C) ... D) ...\nCorreta: [letra]\nFeedback correta: [texto]\nFeedback errada: [texto por opção]\n\nDepois importa para Google Forms\ne ativa o feedback automático.')}`,
+  NotebookLM: `${pli('NotebookLM — Passo 2: passa para outra plataforma')}${pbi('O NotebookLM não gera código interactivo.\nCopia o quiz que geraste e usa este prompt\nno ChatGPT, Gemini ou Claude:\n\n"Tenho este quiz:\n[cola o quiz aqui]\n\nCria uma versão interactiva em HTML/JS\ncom feedback imediato e pontuação.\nDeve funcionar offline no browser."')}`,
+  Copilot: `${pli('Copilot — Passo 2a: HTML interactivo')}${pbi('Com base no quiz que geraste, cria\numa versão interactiva em HTML e JavaScript\nque funcione no browser.\nFeedback imediato, pontuação e resultado final.')}
+${pli('Copilot — Passo 2b: Microsoft Forms')}${pbi('Ou: converte para Microsoft Forms.\nFormata as perguntas para importação direta\ne ativa feedback automático por resposta\nnas definições do formulário.')}`,
+  'AI Studio': `${pli('AI Studio — Passo 2: versão interactiva')}${pbi('Com base no quiz que geraste, cria\numa versão interactiva em HTML e JavaScript\nque funcione offline no browser.\nFeedback imediato por resposta,\npontuação acumulada e resultado final.\nO código deve ser auto-suficiente\nnum único ficheiro HTML.')}`,
+  Claude: `${pli('Claude.ai — Passo 2: Artefacto com link público ⭐')}${pbi('Com base no quiz que geraste, cria\num Artefacto interactivo em HTML e JavaScript.\n\nO Artefacto deve ter:\n- Apresentação de uma pergunta de cada vez\n- Feedback imediato após cada resposta\n- Pontuação acumulada visível\n- Resultado final com resumo\n\nDepois de gerado o Artefacto:\n1. Clica em "Publicar" no canto superior direito\n2. Obtens um link público partilhável\n3. Os alunos acedem no browser\n   sem conta nem instalação')}`
+};
+
+const INTER_MINI_PASSO2={
+  ChatGPT: `${pli('ChatGPT — Passo 2: versão interactiva')}${pbi('Com base nos mini-desafios que geraste, cria\numa versão interactiva em HTML e JavaScript.\nCada desafio numa fase separada com:\n- Apresentação clara do desafio\n- Campo ou opções de resposta\n- Feedback imediato ao submeter\n- Indicador de progressão entre fases\nFicheiro HTML partilhável com os alunos.')}`,
+  Gemini: `${pli('Gemini — Passo 2: HTML interactivo')}${pbi('Com base nos mini-desafios que geraste,\ncria uma versão interactiva em HTML/JS\ncom fases encadeadas, feedback imediato\ne indicador de progressão.')}`,
+  NotebookLM: `${pli('NotebookLM — Passo 2: passa para outra plataforma')}${pbi('O NotebookLM não gera código interactivo.\nCopia os mini-desafios e usa no ChatGPT,\nGemini ou Claude:\n\n"Tenho estes mini-desafios:\n[cola aqui]\n\nCria versão interactiva HTML/JS\ncom fases encadeadas e feedback."')}`,
+  Copilot: `${pli('Copilot — Passo 2: HTML interactivo')}${pbi('Com base nos mini-desafios que geraste,\ncria uma versão interactiva em HTML/JS\ncom fases encadeadas e feedback imediato.')}`,
+  'AI Studio': `${pli('AI Studio — Passo 2: versão interactiva')}${pbi('Com base nos mini-desafios que geraste,\ncria uma versão interactiva HTML/JS\ncom fases encadeadas, feedback imediato\ne indicador de progressão.')}`,
+  Claude: `${pli('Claude.ai — Passo 2: Artefacto com link público ⭐')}${pbi('Com base nos mini-desafios que geraste,\ncria um Artefacto interactivo com:\n- Fases encadeadas com progressão visual\n- Feedback imediato em cada fase\n- Indicador de progresso\n\nPublica o Artefacto para obter link partilhável.\nOs alunos acedem sem conta nem instalação.')}`
+};
+
+const INTER_ATI_PASSO2={
+  ChatGPT: `${pli('ChatGPT — Passo 2: versão interactiva navegável')}${pbi('Com base na atividade gamificada que geraste,\ncria uma versão interactiva em HTML/JS com:\n- Navegação entre secções/fases\n- Pontos de desafio interactivos por fase\n- Feedback imediato e de progressão\n- Pontuação acumulada\n- Ecrã final com síntese\nFicheiro HTML auto-suficiente partilhável.')}`,
+  Gemini: `${pli('Gemini — Passo 2: HTML interactivo navegável')}${pbi('Com base na atividade gamificada,\ncria versão interactiva HTML/JS com\nnavegação entre fases, desafios interactivos\ne feedback por fase e de progressão.')}`,
+  NotebookLM: `${pli('NotebookLM — Passo 2: passa para outra plataforma')}${pbi('O NotebookLM não gera código interactivo.\nCopia a atividade e usa no ChatGPT,\nGemini ou Claude:\n\n"Tenho esta atividade gamificada:\n[cola aqui]\n\nCria versão interactiva HTML/JS\ncom navegação entre fases e feedback."')}`,
+  Copilot: `${pli('Copilot — Passo 2: HTML interactivo navegável')}${pbi('Com base na atividade gamificada,\ncria versão interactiva HTML/JS com\nnavegação entre fases e feedback integrado.')}`,
+  'AI Studio': `${pli('AI Studio — Passo 2: versão interactiva')}${pbi('Com base na atividade gamificada,\ncria versão interactiva HTML/JS com\nnavegação entre fases, feedback imediato\ne de progressão, pontuação acumulada.')}`,
+  Claude: `${pli('Claude.ai — Passo 2: Artefacto interactivo com link ⭐')}${pbi('Com base na atividade gamificada que geraste,\ncria um Artefacto interactivo com:\n- Navegação visual entre secções/fases\n- Desafios interactivos por fase\n- Feedback imediato e de progressão\n- Pontuação acumulada\n- Ecrã final com síntese\n\nPublica o Artefacto → link partilhável.\nOs alunos acedem sem conta.')}`
+};
+
+// ── FRAGMENTOS PEDAGÓGICOS ───────────────────────────────────────────────
+const FB_Q=`Para cada pergunta OBRIGATORIAMENTE:
+- Feedback CORRETA: explica por que está certa e reforça o conceito
+- Feedback por cada ERRADA: explica o erro conceptual específico desse distractor
+- Se houver fórmulas: inclui em LaTeX`;
+
+const FB_M=`Para cada desafio OBRIGATORIAMENTE:
+- Critério de sucesso claro e verificável
+- Feedback formativo: o que o aluno deve ter feito
+- Feedback corretivo: o que fazer se não atingiu
+- Se houver fórmulas: inclui em LaTeX`;
+
+const FB_A=`Para cada ponto de desafio OBRIGATORIAMENTE:
+- Feedback imediato após cada fase
+- Feedback de progressão: como esta fase prepara a seguinte
+- Feedback final: síntese do percurso
+- Se houver fórmulas: inclui em LaTeX`;
+
+// ── PROMPTS — QUIZ ───────────────────────────────────────────────────────
+const QUIZ={
+n1:{
+ChatGPT:`Cria um quiz de 4 perguntas de escolha múltipla
+sobre [tema] para [público-alvo].
+Nível intermédio. Tom profissional.
+Por pergunta: 4 opções, resposta correta e
+${FB_Q}`,
+Gemini:`Quiz de 4 perguntas sobre [tema] para [público].
+Formata como Google Form pronto a copiar.
+Por pergunta: 4 opções, correta assinalada e
+${FB_Q}`,
+NotebookLM:`[Carrega um documento sobre o tema]
+Com base no documento, cria 4 perguntas de
+escolha múltipla sobre os principais conceitos.
+${FB_Q}`,
+Copilot:`Quiz de 4 perguntas sobre [tema].
+Tabela Word: Pergunta/A/B/C/D/Correta/
+Feedback-Correta/Feedback-A/Feedback-B/
+Feedback-C/Feedback-D`,
+'AI Studio':`System: "Crias quizzes pedagógicos com
+feedback detalhado por resposta."
+User: "4 perguntas de escolha múltipla
+sobre [tema] para [público].
+Nível intermédio. ${FB_Q}"`,
+Claude:`claude.ai — Quiz básico
+Cria um quiz de 4 perguntas de escolha múltipla
+sobre [tema] para [público-alvo].
+Nível intermédio. Tom profissional.
+Por pergunta: 4 opções, resposta correta e
+${FB_Q}`
+},
+n2:{
+ChatGPT:`Tenho uma tabela de alinhamento sobre [tema]
+com estes objetivos: [lista].
+Cria um quiz de 4 perguntas de escolha múltipla que:
+- Cobre cada objetivo com pelo menos uma pergunta
+- Exige aplicação ou análise, não memorização
+- Nível intermédio a avançado
+${FB_Q}
+Indica objetivos menos cobertos.
+→ Iteração típica: "Pergunta X testa memorização
+— reformula para exigir análise.
+O feedback do distractor B está genérico
+— especifica o erro conceptual."`,
+Gemini:`Tabela de alinhamento: [tema], objetivos: [lista].
+Google Form: 4 perguntas, cobre cada objetivo,
+exige aplicação.
+${FB_Q}`,
+NotebookLM:`[Carrega os documentos sobre o tema]
+Quiz de 4 perguntas que cobrem os objetivos
+presentes nos documentos.
+Exige aplicação, não citação direta.
+${FB_Q}
+Indica documento e secção de origem.`,
+Copilot:`Tabela alinhamento: [tema], objetivos: [lista].
+Quiz de 4 perguntas. Tabela Word:
+Pergunta/A/B/C/D/Correta/Objetivo/
+Feedback-Correta/Feedback-A/Feedback-B/
+Feedback-C/Feedback-D`,
+'AI Studio':`System: "Especialista em pedagogia.
+Quizzes rigorosos com feedback."
+User: "Tema: [tema]. Objetivos: [lista].
+4 perguntas, cobre cada objetivo.
+${FB_Q}"`,
+Claude:`claude.ai — Quiz com objetivos
+Tema: [tema]
+Objetivos: [lista]
+Público: [público-alvo], nível avançado
+Cria 4 perguntas de escolha múltipla
+que cubram os objetivos e exijam análise.
+${FB_Q}
+→ Iteração: "Pergunta X testa memorização
+— reformula. Feedback do distractor B genérico
+— especifica o erro conceptual."`
+},
+n3:{
+ChatGPT:`Tenho uma tabela de alinhamento sobre [tema],
+objetivos: [lista].
+Tenho também um [imagem/vídeo/áudio] sobre [descreve].
+Cria 4 perguntas:
+- 2 que exigem interpretação crítica do recurso
+  (feedback referencia elementos específicos)
+- 2 que cobrem os objetivos normalmente
+${FB_Q}`,
+Gemini:`[Faz upload do recurso para o Gemini]
+Tabela alinhamento: [tema], objetivos: [lista].
+4 perguntas — 2 do recurso, 2 dos objetivos.
+Feedback das perguntas do recurso referencia
+elementos específicos do mesmo.
+${FB_Q}`,
+NotebookLM:`[Carrega documentos + descreve o recurso]
+4 perguntas: 2 do recurso [tipo] sobre [descreve],
+2 sobre os objetivos dos documentos.
+${FB_Q}`,
+Copilot:`Tabela: [tema], objetivos: [lista].
+Recurso [tipo] sobre [descreve].
+4 perguntas: 2 do recurso + 2 normais.
+Tabela Word com coluna "Elemento do recurso".
+${FB_Q}`,
+'AI Studio':`System: "Quizzes com análise crítica
+de recursos multimédia."
+User: "Tema: [tema]. Objetivos: [lista].
+Recurso: [tipo e descrição].
+4 perguntas — 2 do recurso, 2 normais.
+${FB_Q}"`,
+Claude:`claude.ai — Quiz com recurso multimédia
+Tema: [tema] | Objetivos: [lista]
+Tenho um [imagem/áudio/vídeo] sobre [descreve].
+4 perguntas:
+- 2 de interpretação crítica do recurso
+- 2 sobre os objetivos normalmente
+${FB_Q}`
+}};
+
+// ── PROMPTS — MINI-DESAFIOS ──────────────────────────────────────────────
+const MINI={
+n1:{
+ChatGPT:`Mini-desafio de 10 minutos sobre [tema]
+para [público-alvo].
+O participante aplica [conceito específico].
+${FB_M}`,
+Gemini:`Mini-desafio 10 min sobre [tema] para [público].
+Google Doc: Título/Instruções/Critério/
+Feedback-formativo/Feedback-corretivo/Pontuação
+${FB_M}`,
+NotebookLM:`[Carrega um documento sobre o tema]
+Mini-desafio sobre o conceito mais exigente.
+${FB_M}
+Indica a fonte no documento.`,
+Copilot:`Mini-desafio 10 min sobre [tema]. Word:
+Título/Instruções/Critério/
+Feedback-formativo/Feedback-corretivo/Pontuação`,
+'AI Studio':`System: "Mini-desafios com feedback formativo."
+User: "Mini-desafio 10 min sobre [conceito].
+O participante aplica [o quê].
+${FB_M}"`,
+Claude:`claude.ai — Mini-desafio básico
+Mini-desafio de 10 minutos sobre [tema]
+para [público-alvo].
+O participante aplica [conceito específico].
+${FB_M}`
+},
+n2:{
+ChatGPT:`Tenho uma sessão sobre [tema] com esta sequência:
+1. [momento 1]  2. [momento 2]  3. [momento 3]
+Mini-desafio por momento:
+- Encaixa sem interromper a sequência
+- Exige aplicação do conteúdo desse momento
+- Completável em menos de 10 minutos
+- Elemento de progressão (pontos/nível/votação)
+${FB_M}
+→ Iteração: "Critério do desafio 2 vago —
+define em termos do que o participante consegue
+fazer, não do que sabe."`,
+Gemini:`Sessão sobre [tema]: [sequência].
+Mini-desafio por momento. Google Doc com progressão.
+Título/Instruções/Critério/Feedback-formativo/
+Feedback-corretivo/Pontuação/Progressão
+${FB_M}`,
+NotebookLM:`[Carrega documentos]
+3 conceitos mais exigentes → mini-desafio por conceito.
+Parte dos documentos. Indica a fonte.
+${FB_M}`,
+Copilot:`Sessão [tema]: [sequência].
+Mini-desafio por momento. Word com progressão.
+${FB_M}`,
+'AI Studio':`System: "Mini-desafios encadeados com progressão."
+User: "Sessão [tema]. Sequência: [momentos].
+Mini-desafio por momento com critério verificável
+e feedback formativo e corretivo."`,
+Claude:`claude.ai — Mini-desafios encadeados
+Tema: [tema] | Sequência: [momentos]
+Público: [público-alvo]
+Mini-desafio por momento da sessão.
+${FB_M}
+→ Iteração: "Critério do desafio 2 vago —
+define em termos do que o participante consegue fazer."`
+},
+n3:{
+ChatGPT:`Sessão sobre [tema], sequência: [momentos].
+Tenho [imagem/áudio/vídeo] sobre [descreve]
+que uso no momento [n].
+Mini-desafio por momento — o do momento [n]
+parte da análise do recurso.
+${FB_M}
+Feedback do desafio [n] referencia elementos
+específicos do recurso.`,
+Gemini:`[Upload do recurso para o Gemini]
+Sessão [tema], sequência: [momentos].
+Mini-desafio por momento — o do momento [n]
+usa o recurso. ${FB_M}`,
+NotebookLM:`[Carrega documentos + descreve recurso]
+Sequência: [momentos]. Recurso [tipo] no momento [n].
+Mini-desafio por momento — o do [n] analisa
+o recurso com referência aos documentos.
+${FB_M}`,
+Copilot:`Sessão [tema], sequência: [momentos].
+Recurso [tipo] no momento [n].
+Mini-desafio por momento. Word com coluna extra
+no desafio [n]: "Elemento do recurso referenciado".
+${FB_M}`,
+'AI Studio':`System: "Mini-desafios com recursos multimédia
+com feedback que referencia elementos específicos."
+User: "Sequência [momentos]. Recurso [tipo] no [n].
+Mini-desafio por momento — o do [n] parte do recurso.
+${FB_M}"`,
+Claude:`claude.ai — Mini-desafios com recurso
+Tema: [tema] | Sequência: [momentos]
+Recurso [imagem/áudio/vídeo] sobre [descreve]
+no momento [n].
+Mini-desafio por momento — o do [n] parte do recurso.
+${FB_M}
+Feedback do desafio [n] referencia elementos
+específicos do recurso.`
+}};
+
+// ── PROMPTS — ATIVIDADE GAMIFICADA ───────────────────────────────────────
+const ATI={
+n1:{
+ChatGPT:`Tenho uma apresentação sobre [tema] com [n] secções:
+[lista].
+Adiciona 2 pontos de desafio entre secções
+e síntese no final.
+${FB_A}
+Instruções simples para o facilitador.`,
+Gemini:`Apresentação sobre [tema], [n] secções.
+Slides de desafio com feedback nas notas.
+Slide final: síntese + 2 perguntas.
+${FB_A}`,
+NotebookLM:`[Carrega documentos]
+Atividade simples: 2 fases, desafio, síntese.
+${FB_A}
+Indica fontes.`,
+Copilot:`Apresentação PowerPoint: [tema], [n] secções.
+2 slides de desafio com feedback nas notas
++ slide final com síntese.
+${FB_A}`,
+'AI Studio':`System: "Sequências gamificadas com feedback."
+User: "Apresentação [tema], [n] secções.
+2 desafios com feedback. Síntese final."`,
+Claude:`claude.ai — Atividade gamificada básica
+Apresentação sobre [tema]: [lista de secções].
+Adiciona 2 pontos de desafio e síntese final.
+${FB_A}
+Instruções para o facilitador em cada ponto.`
+},
+n2:{
+ChatGPT:`Apresentação sobre [tema], [n] secções: [lista].
+Sequência gamificada com:
+- Ponto de desafio entre cada secção
+- Critérios de progressão claros
+- Avaliação formativa no final
+- Instruções para o facilitador nas notas
+${FB_A}
+→ Iteração: "Feedback após fase 2 não explica
+como preparar a fase 3 — reformula para mostrar
+o que o desempenho indica para a seguinte."`,
+Gemini:`Apresentação [tema], [n] secções.
+Slides de desafio com critérios de progressão
+e instruções nas notas.
+Slide final: avaliação formativa.
+${FB_A}`,
+NotebookLM:`[Carrega documentos]
+Atividade gamificada sobre [tema] para [tempo].
+Fases com progressão e reflexão final.
+${FB_A}
+Indica fontes em cada fase.`,
+Copilot:`Apresentação [tema], estrutura: [lista].
+Slides com desafios, progressão, instruções
+nas notas e avaliação formativa final.
+${FB_A}`,
+'AI Studio':`System: "Gamificação pedagógica com progressão."
+User: "Apresentação [tema], secções [lista].
+Sequência gamificada com desafios, progressão,
+feedback por fase e avaliação final."`,
+Claude:`claude.ai — Atividade gamificada completa
+Tema: [tema] | Secções: [lista]
+Público: [público-alvo] | Duração: [tempo]
+Sequência gamificada com desafios entre secções,
+critérios de progressão e instruções.
+${FB_A}
+Distingue: feedback por questão vs. progressão.`
+},
+n3:{
+ChatGPT:`Apresentação [tema], [n] secções: [lista].
+Tenho [imagem/áudio/vídeo] sobre [descreve]
+para a secção [n].
+Sequência gamificada — o recurso é o desafio
+central da secção [n].
+${FB_A}
+Feedback da fase [n] referencia o recurso.`,
+Gemini:`[Upload do recurso para o Gemini]
+Apresentação [tema], secções: [lista].
+Recurso na secção [n].
+Sequência gamificada — recurso é desafio central.
+${FB_A}`,
+NotebookLM:`[Carrega documentos + descreve recurso]
+Atividade gamificada [tema]. Recurso na fase [n].
+O desafio dessa fase parte do recurso.
+${FB_A}`,
+Copilot:`Apresentação [tema], secções [lista].
+Recurso [tipo] na secção [n].
+Sequência gamificada — recurso é o desafio [n].
+Slides com instruções. Avaliação final.
+${FB_A}`,
+'AI Studio':`System: "Gamificação com recursos multimédia centrais."
+User: "Apresentação [tema], secções [lista].
+Recurso [tipo] na secção [n]. Sequência gamificada
+— recurso é o desafio central. ${FB_A}"`,
+Claude:`claude.ai — Atividade com recurso multimédia
+Tema: [tema] | Secções: [lista]
+Recurso [imagem/áudio/vídeo] sobre [descreve]
+na secção [n].
+Sequência gamificada — recurso é o desafio central.
+${FB_A}
+Feedback da fase [n] referencia elementos
+específicos do recurso.`
+}};
+
+// ── FUNÇÃO PARA GERAR CAIXAS COM PASSO 2 ────────────────────────────────
+function mkRef(uid, lvl, data, interData){
+  const pContents=PLATS.map(p=>`${pl(p)}${pb(data[lvl][p])}`);
+  const iContents=interData ? PLATS.map(p=>interData[p]||'') : null;
+  return refBox(uid, PLATS, pContents, iContents);
+}
+
+// ── FERRAMENTAS PARA ENTREGAR AOS ALUNOS ────────────────────────────────
+const TOOLS=`<div class="ftg">
+  <div class="ftc"><div class="ftc-icon">🌐</div><div class="ftc-name">Claude.ai — link público</div><div class="ftc-desc">Artefacto publicável com link partilhável. Sem conta para o aluno. Opção mais directa.</div><span class="ftc-tag" style="background:#ffe8d6;color:#7a2e0a">Link directo</span></div>
+  <div class="ftc"><div class="ftc-icon">🟠</div><div class="ftc-name">Moodle — Quiz GIFT</div><div class="ftc-desc">Importação directa via formato GIFT. Feedback por resposta integrado. LaTeX via MathJax. Pede ao chatbot o formato GIFT no Passo 2.</div><span class="ftc-tag" style="background:#ffe8d6;color:#7a2e0a">LMS institucional</span></div>
+  <div class="ftc"><div class="ftc-icon">🟠</div><div class="ftc-name">Moodle — Lição</div><div class="ftc-desc">Percurso adaptativo com redirecionamento por resposta. Ideal para mini-desafios e atividades gamificadas. Pede ao chatbot estrutura de Lição.</div><span class="ftc-tag" style="background:#ffe8d6;color:#7a2e0a">LMS institucional</span></div>
+  <div class="ftc"><div class="ftc-icon">📦</div><div class="ftc-name">H5P + Moodle</div><div class="ftc-desc">Interactivo, embedável no Moodle. Branching Scenario para percursos adaptativos e escape rooms.</div><span class="ftc-tag" style="background:#f3e5f5;color:#6b0080">Embedável</span></div>
+  <div class="ftc"><div class="ftc-icon">✨</div><div class="ftc-name">Genially</div><div class="ftc-desc">Visual, interactivo, gratuito básico. Bom para sequências com progressão visual e escape rooms.</div><span class="ftc-tag" style="background:#ead6ff;color:#6b0080">Interactivo</span></div>
+  <div class="ftc"><div class="ftc-icon">📋</div><div class="ftc-name">Google/MS Forms</div><div class="ftc-desc">Gratuito. Feedback automático. Directo para quizzes.</div><span class="ftc-tag" style="background:#fff3e0;color:#7a4800">Formativo</span></div>
+  <div class="ftc"><div class="ftc-icon">🎮</div><div class="ftc-name">Kahoot</div><div class="ftc-desc">Tempo real com ranking. Gratuito até 10 participantes.</div><span class="ftc-tag" style="background:#d6f5ec;color:#0a4f3c">Sala</span></div>
+  <div class="ftc"><div class="ftc-icon">📚</div><div class="ftc-name">Quizlet</div><div class="ftc-desc">Flashcards + quiz. Gratuito básico.</div><span class="ftc-tag" style="background:#d6eeff;color:#1a3a4f">Individual</span></div>
+</div>`;
+
+// ── FUNÇÕES DE PAINEL POR NÍVEL ──────────────────────────────────────────
+function lvlPanel(n, label, sub, intro, fbTxt, lxFlag, advTxt, uid, data, interData){
+  const cols=[['var(--n1)','var(--n1bg)','🟢'],['var(--n2)','var(--n2bg)','🟡'],['var(--n3)','var(--n3bg)','🔴']];
+  const [tc,bg,ico]=cols[n-1];
+  return `<div style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:4px;font-size:11px;font-weight:600;margin-bottom:10px;background:${bg};color:${tc}">${ico} Nível ${n} — <em>${sub}</em></div>
+  <p>${intro}</p>
+  ${fbTxt?fb(fbTxt):''}
+  ${lxFlag?lx('Para disciplinas com fórmulas: acrescenta "Fornece as expressões em LaTeX: $...$ inline, $$...$$ display."'):''}
+  ${advTxt?adv(advTxt):''}
+  ${mkRef(uid,['n1','n2','n3'][n-1],data,interData)}`;
+}
+
+// ── BLOCOS ───────────────────────────────────────────────────────────────
+function rIntro(){
+  return obj('Como usar este documento','Prompts organizados por tipo de atividade e por nível. Escolhe o nível em que te sentes confortável e a plataforma que já usas.')+
+  `<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+    <span style="font-size:12px">🟢 <strong>Nível 1</strong> — Prompt simples, sem contexto completo</span>
+    <span style="font-size:12px">🟡 <strong>Nível 2</strong> — Prompt com objetivos reais + iteração</span>
+    <span style="font-size:12px">🔴 <strong>Nível 3</strong> — Nível 2 + integração de recurso multimédia</span>
+  </div>
+  <p style="font-size:12px;font-weight:600;color:#01579b;margin-bottom:8px">Em cada prompt há um <strong>Passo 2 — Versão interactiva</strong> que podes expandir para obter uma versão navegável da atividade, com link partilhável no caso do Claude.ai.</p>`+
+  `<div class="ped-grid">
+    <div class="ped-card" style="background:#e8f5ff;border-color:#90caf9">
+      <div class="ped-icon">📝</div>
+      <div class="ped-title" style="color:#0d47a1">Quiz</div>
+      <div class="ped-desc">Testa <strong>conhecimento declarativo</strong>. O participante responde a perguntas com uma resposta certa. O valor pedagógico está no feedback — não no quiz em si.</div>
+      <span class="ped-key" style="background:#bbdefb;color:#0d47a1">Saber → verificar</span>
+    </div>
+    <div class="ped-card" style="background:#fff8e1;border-color:#ffcc80">
+      <div class="ped-icon">⚡</div>
+      <div class="ped-title" style="color:#e65100">Mini-desafio</div>
+      <div class="ped-desc">Testa <strong>aplicação</strong>. O participante faz algo concreto com o que aprendeu. O critério de sucesso é verificável — sabe-se quando atingiu.</div>
+      <span class="ped-key" style="background:#ffe0b2;color:#e65100">Saber → aplicar</span>
+    </div>
+    <div class="ped-card" style="background:#f3e5f5;border-color:#ce93d8">
+      <div class="ped-icon">🎯</div>
+      <div class="ped-title" style="color:#6b0080">Atividade gamificada</div>
+      <div class="ped-desc">Testa <strong>raciocínio em contexto</strong>. O participante navega por fases com progressão. O feedback de progressão explica como cada fase prepara a seguinte.</div>
+      <span class="ped-key" style="background:#e1bee7;color:#6b0080">Saber → raciocinar em contexto</span>
+    </div>
+  </div>`+
+  fb('Em todos os tipos e níveis: o feedback é obrigatório. Deve explicar o raciocínio — não apenas classificar.'+
+  ' Feedback que diz apenas "Correto!" ou "Errado!" não tem valor pedagógico.')+
+  lx('Para disciplinas com fórmulas matemáticas, físicas ou químicas: acrescenta sempre "Fornece as expressões em LaTeX: $...$ inline, $$...$$ display."')+
+  `<div class="port-note">Guarda tudo o que produzes em cada sessão — mesmo os rascunhos. No final da formação constróis o teu portfolio com as atividades criadas ao longo de todas as sessões.</div>`+
+  `<div class="save-note">Antes de avançar para o ciclo seguinte, guarda o melhor resultado que obtiveste. Não há refinamento separado no final — o produto de cada ciclo é o que ficaste antes de avançar.</div>`+
+  `<div class="tcr"><span class="tc" style="background:#1F4E79">ChatGPT</span><span class="tc" style="background:#1A73E8">Gemini</span><span class="tc" style="background:#3c3c3c">NotebookLM</span><span class="tc" style="background:#0078D4">Copilot</span><span class="tc" style="background:#34A853">AI Studio</span><span class="tc" style="background:#cc785c">Claude.ai</span></div>`;
+}
+
+function rC1(){
+  const l1=lvlPanel(1,'Nível 1','Prompt simples',
+    'Quiz sobre um tópico à tua escolha. Não precisas de tabela de alinhamento.',
+    'Mínimo: feedback para resposta correta + feedback específico para cada distractor.',
+    false,null,'q1',QUIZ,INTER_PASSO2);
+  const l2=lvlPanel(2,'Nível 2','Prompt com objetivos + iteração',
+    'Usa os objetivos reais. Faz pelo menos uma iteração para melhorar o feedback e o nível de análise.',
+    'O feedback deve estar ligado ao objetivo — não pode ser genérico.',
+    true,null,'q2',QUIZ,INTER_PASSO2);
+  const l3=lvlPanel(3,'Nível 3','Nível 2 + recurso multimédia',
+    'Integra um recurso já criado. ChatGPT, Gemini, AI Studio ou Claude têm melhor suporte multimédia.',
+    null,true,
+    'O feedback das perguntas do recurso deve referenciar elementos específicos, não ser genérico.',
+    'q3',QUIZ,INTER_PASSO2);
+  return obj('Objetivo','Criar um quiz com 4 perguntas e feedback pedagógico. O Passo 2 dentro de cada plataforma gera a versão interactiva.')+
+  save('Guarda o quiz antes de avançar para o ciclo 2.')+
+  warn('Escolhe uma plataforma e um nível. Faz pelo menos uma iteração antes de avançar.')+
+  lvlTabs('qlvl',[l1,l2,l3],['🟢 Nível 1|Básico','🟡 Nível 2|Intermédio','🔴 Nível 3|Avançado'])+
+  card('🌐','Ferramentas para entregar aos participantes','—',TOOLS);
+}
+
+function rC2(){
+  const l1=lvlPanel(1,'Nível 1','Prompt simples',
+    'Um mini-desafio para um momento específico. Não precisas de descrever a sequência completa.',
+    'Mínimo: critério verificável + feedback formativo + feedback corretivo.',
+    false,null,'m1',MINI,INTER_MINI_PASSO2);
+  const l2=lvlPanel(2,'Nível 2','Sequência completa + iteração',
+    'Descreve a sequência. Um desafio por momento com progressão encadeada.',
+    'O feedback do desafio 1 deve preparar para o desafio 2 — é formativo, não classificatório.',
+    true,null,'m2',MINI,INTER_MINI_PASSO2);
+  const l3=lvlPanel(3,'Nível 3','Nível 2 + recurso multimédia',
+    'Integra um recurso já criado como ponto de partida de um dos desafios.',
+    null,true,
+    'O feedback do desafio com recurso deve referenciar elementos específicos do mesmo.',
+    'm3',MINI,INTER_MINI_PASSO2);
+  return obj('Objetivo','Mini-desafios com critério verificável e feedback que orienta o participante. O Passo 2 gera a versão interactiva.')+
+  save('Guarda os mini-desafios antes de avançar para o ciclo 3.')+
+  tip('Trabalho em pares de áreas diferentes. Produz a TUA versão.')+
+  lvlTabs('mlvl',[l1,l2,l3],['🟢 Nível 1|Básico','🟡 Nível 2|Intermédio','🔴 Nível 3|Avançado'])+
+  card('🌐','Ferramentas para entregar aos participantes','—',TOOLS);
+}
+
+function rC3(){
+  const l1=lvlPanel(1,'Nível 1','Dois pontos de desafio',
+    'Parte de uma apresentação existente. Dois pontos de desafio e síntese.',
+    'Feedback imediato após cada ponto + síntese no final.',
+    false,null,'a1',ATI,INTER_ATI_PASSO2);
+  const l2=lvlPanel(2,'Nível 2','Sequência completa com progressão',
+    'Atividade completa. Exige iteração para garantir o feedback de progressão.',
+    '<strong>Feedback de progressão ≠ feedback por questão.</strong> O de progressão explica como uma fase prepara a seguinte.',
+    true,null,'a2',ATI,INTER_ATI_PASSO2);
+  const l3=lvlPanel(3,'Nível 3','Nível 2 + recurso multimédia',
+    'Integra um recurso como elemento central de um ponto de desafio.',
+    null,true,
+    'O feedback da fase com recurso deve referenciar elementos específicos do mesmo.',
+    'a3',ATI,INTER_ATI_PASSO2);
+  return obj('Objetivo','Sequência gamificada com dois tipos de feedback: imediato por questão E de progressão entre fases. O Passo 2 gera a versão interactiva navegável.')+
+  save('Guarda a atividade gamificada antes de terminar — é o produto mais complexo desta sessão.')+
+  tip('Grupos de 3, áreas diferentes. Produz a TUA versão.')+
+  lvlTabs('alvl',[l1,l2,l3],['🟢 Nível 1|Básico','🟡 Nível 2|Intermédio','🔴 Nível 3|Avançado'])+
+  card('🌐','Ferramentas para entregar aos participantes','—',TOOLS);
+}
+
+function rEscape(){
+  return obj('Atividade extra — Escape Room','Exemplo de prompt para criar um escape room pedagógico sobre Literacia Financeira. Usa após dominares os três ciclos principais.')+
+  `<div class="escape-box">
+    <h4>🔐 Escape Room — Literacia Financeira</h4>
+    <p style="font-size:12px;color:#a0a0cc;margin-bottom:12px">Um escape room pedagógico combina várias mecânicas de jogo — puzzles sequenciais, pistas, tempo limite e narrativa — com objetivos de aprendizagem concretos. O participante "foge" ao resolver desafios que testam conhecimento aplicado.</p>
+    ${pl('Prompt base — ChatGPT / Claude.ai')}
+    ${pb(`Cria um escape room pedagógico sobre
+Literacia Financeira para residentes em Portugal
+sem conhecimentos especializados.
+Duração: 20 a 30 minutos.
+Objetivo pedagógico: no final o participante
+consegue distinguir poupança de investimento,
+calcular juros simples básicos e identificar
+três erros financeiros comuns.
+
+Estrutura do escape room:
+1. NARRATIVA DE ABERTURA (2-3 linhas)
+   Situação que justifica a urgência de resolver
+   os desafios (ex: "tens 30 minutos para
+   desbloquear a conta antes que...")
+
+2. SALA 1 — Conceitos básicos (Nível fácil)
+   Puzzle ou desafio sobre poupança vs. investimento
+   Com pista para a próxima sala se acertar
+
+3. SALA 2 — Aplicação (Nível intermédio)
+   Cálculo ou decisão financeira simples
+   Com pista para a próxima sala
+
+4. SALA 3 — Análise crítica (Nível difícil)
+   Identificar erros numa situação financeira real
+   Código final para "escapar"
+
+Para cada sala inclui:
+- Enunciado do desafio
+- Resposta correta
+- Feedback pedagógico: explica o raciocínio,
+  não apenas indica certo/errado
+- Pista para a próxima sala
+
+Tom: envolvente, situações realistas portuguesas.
+Evita jargão financeiro desnecessário.`)}
+    <div style="margin-top:16px">
+      ${pli('Claude.ai — Passo 2: Artefacto interactivo com link')}
+      ${pbi(`Com base no escape room que geraste,
+cria um Artefacto Claude interactivo com:
+- Cronómetro visível (30 minutos)
+- Navegação entre salas desbloqueada por resposta certa
+- Feedback imediato em cada sala
+- Ecrã final com resumo dos conceitos aprendidos
+- Design atmosférico (tons escuros, estética de escape room)
+
+Publica o Artefacto para obter link partilhável.
+Os participantes acedem sem conta nem instalação.`)}
+    </div>
+    <div style="margin-top:16px">
+      ${pli('ChatGPT / AI Studio — versão HTML interactiva')}
+      ${pbi(`Com base no escape room que geraste,
+cria uma versão interactiva em HTML/JS com:
+- Cronómetro visível
+- Salas desbloqueadas sequencialmente
+- Feedback imediato por sala
+- Design atmosférico com tema de escape room
+- Ecrã final com síntese pedagógica
+Ficheiro HTML auto-suficiente, funciona offline.`)}
+    </div>
+  </div>
+  <div style="background:#f8f8f8;border-radius:8px;padding:14px;margin-top:12px">
+    <p style="font-size:12px;font-weight:600;margin-bottom:8px">💡 Diferença pedagógica face aos outros tipos:</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px">
+      <div><strong>Quiz</strong> — responde e recebe feedback</div>
+      <div><strong>Escape room</strong> — resolve para avançar na narrativa</div>
+      <div><strong>Mini-desafio</strong> — aplica um conceito</div>
+      <div><strong>Escape room</strong> — aplica vários em sequência com tensão</div>
+      <div><strong>Atividade gamificada</strong> — progressão com feedback</div>
+      <div><strong>Escape room</strong> — progressão com narrativa e urgência</div>
+    </div>
+    <p style="font-size:11px;color:var(--muted);margin-top:10px">A narrativa e o cronómetro são os elementos que distinguem o escape room — criam urgência emocional que aumenta o envolvimento. O risco é que a narrativa domine o objetivo pedagógico. Pergunta de controlo: "Se retirares a narrativa e o cronómetro, os desafios ainda têm valor pedagógico?"</p>
+  </div>`;
+}
+
+// ── BLOCOS CONFIG ────────────────────────────────────────────────────────
+const BLOCKS=[
+  {id:'intro',nav:'Introdução',num:'—',tag:'Documento de Apoio',tc:'#333',tb:'#f0f0f0',
+   title:'Como usar este documento',sub:'3 tipos · 3 níveis · 6 plataformas · interactividade · portfolio',
+   dur:'—',mins:null,dot:'#999',render:rIntro},
+  {id:'c1',nav:'1 · Quiz',num:'1',tag:'Ciclo 1 · Quiz',tc:'#0a4f3c',tb:'#d6f5ec',
+   title:'Criar Quizzes',sub:'4 perguntas · 3 níveis · Passo 2 interactivo por plataforma',
+   dur:'28 min',mins:28,dot:'#2e7d5e',render:rC1},
+  {id:'c2',nav:'2 · Mini-desafios',num:'2',tag:'Ciclo 2 · Mini-desafios',tc:'#4f2d0a',tb:'#ffecd6',
+   title:'Desenvolver Mini-Desafios',sub:'3 níveis · Passo 2 interactivo por plataforma',
+   dur:'27 min',mins:27,dot:'#e07b39',render:rC2},
+  {id:'c3',nav:'3 · Atividade',num:'3',tag:'Ciclo 3 · Atividade',tc:'#2d0a4f',tb:'#ead6ff',
+   title:'Atividade Gamificada Completa',sub:'3 níveis · Passo 2 interactivo por plataforma',
+   dur:'27 min',mins:27,dot:'#7c3aed',render:rC3},
+  {id:'escape',nav:'★ Escape Room',num:'★',tag:'Atividade Extra',tc:'#1a237e',tb:'#c5cae9',
+   title:'Escape Room — Literacia Financeira',sub:'Exemplo de prompt · versão interactiva · diferença pedagógica',
+   dur:'Extra',mins:null,dot:'#3949ab',render:rEscape},
+];
+
+let CUR=0;
+function buildNav(){
+  const nav=document.getElementById('NAV'),sb=document.getElementById('SB');
+  nav.innerHTML='';sb.innerHTML='<div class="sbl">Secções</div>';
+  BLOCKS.forEach((b,i)=>{
+    const btn=document.createElement('button');
+    btn.className='nb'+(i===0?' act':'');btn.textContent=b.nav;btn.onclick=()=>goTo(i);nav.appendChild(btn);
+    const si=document.createElement('div');
+    si.className='si'+(i===0?' act':'');si.id='si_'+i;si.onclick=()=>goTo(i);
+    si.innerHTML=`<div class="dot" style="background:${b.dot}"></div><div><div class="si-t">${b.mins?b.mins+'m':'—'}</div><div class="si-n">${b.nav}</div></div>`;
+    sb.appendChild(si);
+  });
+}
+function goTo(i){
+  if(i<0||i>=BLOCKS.length)return;CUR=i;
+  document.querySelectorAll('.nb').forEach((b,j)=>b.classList.toggle('act',j===i));
+  document.querySelectorAll('.si').forEach((b,j)=>b.classList.toggle('act',j===i));
+  document.getElementById('PF').style.width=(i/(BLOCKS.length-1)*100)+'%';
+  renderBlk(i);document.getElementById('CT').scrollTop=0;
+}
+function renderBlk(i){
+  const b=BLOCKS[i];
+  if(b.mins)initT(b.id,b.mins);
+  const tw=b.mins?`<div class="tw"><div><div class="td" id="td_${b.id}">${String(b.mins).padStart(2,'0')}:00</div><div class="tlbl">Temporizador · ${b.mins} min</div></div><div class="tbtns"><button class="tbtn pri" id="tb_${b.id}" onclick="togT('${b.id}')">▶ Iniciar</button><button class="tbtn" onclick="resT('${b.id}')">↺ Reset</button></div></div>`:'';
+  document.getElementById('CT').innerHTML=`<div class="blk vis"><div class="bh"><div class="bn">${b.num}</div><div class="bht"><span class="btag" style="color:${b.tc};background:${b.tb}">${b.tag}</span><div class="btitle">${b.title}</div><div class="bsub">${b.sub}</div></div><div class="dbadge">${b.dur}</div></div>${tw}${b.render()}<div class="nf"><button class="nfb" onclick="goTo(${i-1})" ${i===0?'disabled':''}>← Anterior</button><div class="nfi">${i+1} / ${BLOCKS.length}</div><button class="nfb" onclick="goTo(${i+1})" ${i===BLOCKS.length-1?'disabled':''}>Próximo →</button></div></div>`;
+  if(b.mins)rdT(b.id);
+}
+buildNav();renderBlk(0);
+</script>
+</body>
+</html>
