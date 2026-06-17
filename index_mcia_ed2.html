@@ -11,25 +11,10 @@
   <p>Este conteúdo será exportado para PDF.</p>
 </div>
 
-<button onclick="gerarPDF()">Gerar PDF</button>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
-<script>
-function gerarPDF() {
-  const elemento = document.getElementById('conteudo');
-
-  html2pdf()
-    .from(elemento)
-    .set({
-      margin: 10,
-      filename: 'documento.pdf',
-      html2canvas: { scale: 2 },
-      jsPDF: { format: 'a4', orientation: 'portrait' }
-    })
-    .save();
-}
-</script>
+<a href="https://raw.githubusercontent.com/UTILIZADOR/REPO/BRANCH/ficheiro.pdf" download>
+  <button>Descarregar PDF</button>
+</a>
 
 </body>
 </html>
