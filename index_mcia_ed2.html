@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <title>Exportar PDF</title>
+</head>
+<body>
+
+<div id="conteudo">
+  <h1>O meu documento</h1>
+  <p>Este conteúdo será exportado para PDF.</p>
+</div>
+
+<button onclick="gerarPDF()">Gerar PDF</button>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<script>
+function gerarPDF() {
+  const elemento = document.getElementById('conteudo');
+
+  html2pdf()
+    .from(elemento)
+    .set({
+      margin: 10,
+      filename: 'documento.pdf',
+      html2canvas: { scale: 2 },
+      jsPDF: { format: 'a4', orientation: 'portrait' }
+    })
+    .save();
+}
+</script>
+
+</body>
+</html>
